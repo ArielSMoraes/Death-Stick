@@ -1,10 +1,15 @@
 //player
 function Player ()
 {
-	this.haste = 1;
+	this.haste = 3;
 	this.score = 0;
 	this.image = new Image();
 	this.image.src = "images/player1.png";
+
+	this.width = 64;
+	this.height = 64;
+	this.x = 0;
+	this.y = 0;
 }
 
 Player.prototype = new Elemento();
