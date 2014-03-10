@@ -1,157 +1,150 @@
 <html>
-	<head>
-		<style>
-			#myCanvas{
-				margin-left: 400px;
-			}
-		</style>
-	</head>
+  <head>
+    <style>
+      #myCanvas{
+        margin-left: 400px;
+      }
+    </style>
+  </head>
 
-	<body onload="animate();">
-		<div id="wrapper">
-			<canvas id="myCanvas" width="600" height="400" ></canvas>
-		</div>
-	
-	
-	
-		<script type="text/javascript" src="js.js"></script>
-		<script type="text/javascript" src="elemento.js"></script>
-		<script type="text/javascript" src="scene.js"></script>
-		<script type="text/javascript" src="player.js"></script>
-		<script type="text/javascript" src="stick.js"></script>
-		<script>
-			window.requestAnimFrame = (function(callback)
-			{
-				return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-				function(callback)
-				{
-				  window.setTimeout(callback, 1000 / 60);
-				};
-			})();
-		
-			var canvas = document.getElementById('myCanvas');
-			var context = canvas.getContext('2d');
-		
-			//	Inicializa objetos da tela
-			var scene = new Scene(context);
-			var nDeathSticks = 3;
-			//ate 150 sem lag
-			var nSticks = 15;
-			var intervalDeath = 2000;
-		
-			player = new Player();
+  <body onload="animate();">
+    <div id="wrapper">
+      <canvas id="myCanvas" width="600" height="400" ></canvas>
+    </div>
 
-			scene.backgroundImg.onload = function ()
-			{
-				scene.setImg(context);
-			}
-			
-			//score sticks
-			var scoreSticks = new Array();
-			
-			for (var i = 0; i < nSticks; i++)
-			{
-				var stick = new Stick();
-				stick.setWidth(32);
-				stick.setHeight(32);
-				stick.randomPos();
-				
-				scoreSticks[i] = stick;
-			}
-			
-			//death sticks
-			var deathSticks = new Array();
-			
-			for (var i = 0; i < nDeathSticks; i++)
-			{
-				var deathStick = new Stick();
-				deathStick.setImg("images/death stick.png");
-				deathStick.setWidth(32);
-				deathStick.setHeight(32);
-				deathStick.randomPos();
-				deathStick.intervalChangePosition(deathStick, intervalDeath);
-				
-				deathSticks[i] = deathStick;
-			}
-			//	- - FIM - - Inicializa objetos da tela
-			
-			
-			//	Eventos Tela
-			var keys = {};
-			document.onkeydown = function(e)
-			{
-				keys[e.which] = true;
-			}
-			
-			document.onkeyup = function (e)
-			{
-				delete keys[e.which];
-			}
-			//	- - FIM - - Eventos Tela
-			
-			//fps
-			var filterStrength = 20;
-			var frameTime = 0, lastLoop = new Date, thisLoop;
-			
-			function animate()
-			{
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				
-				// move player, e checa colições
-				player.move(keys);
-				for (i = 0; i < nSticks; i++)
-				{
-					scene.colisionScore(player,scoreSticks[i]);
-				}
-				
-				for (i = 0; i < nDeathSticks; i++)
-				{
-					if(scene.colisionDeath(player,deathSticks[i]))
-					{
-						//fim de jogo
-						document.onkeydown = "";
-						document.onkeyup = "";
-						keys = "";
-						delete keys;
-					}
-				}
-				// - - FIM - - move player, e checa colições
-				
-				scene.drawScene(context, canvas);
-				
-				//draw sticks
-				for (i = 0; i < nSticks; i++)
-				{
-					scoreSticks[i].drawElement(context);
-				}
-				
-				//draw death sticks
-				for (i = 0; i < nDeathSticks; i++)
-				{
-					deathSticks[i].drawElement(context);
-				}
-				
-				player.drawElement(context);
-				player.drawScore(context, canvas);
-				
-				var thisFrameTime = (thisLoop=new Date) - lastLoop;
-				frameTime+= (thisFrameTime - frameTime) / filterStrength;
-				lastLoop = thisLoop;
-				
-				requestAnimFrame(function()
-				{
-					animate();
-				});
-				
-			}
-			
-			//animate();
-					
-			setInterval(function(){
-				var fdpsLog = (1000/frameTime).toFixed(1) + " fps";
-				console.log(fdpsLog);
-			},500);
-			
-		</script>
-	</body>
+
+    <script type="text/javascript" src="js.js"></script>
+    <script type="text/javascript" src="elemento.js"></script>
+    <script type="text/javascript" src="scene.js"></script>
+    <script type="text/javascript" src="player.js"></script>
+    <script type="text/javascript" src="stick.js"></script>
+    <script>
+      window.requestAnimFrame = (function(callback)
+      {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+        function(callback)
+        {
+          window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      //  Inicializa objetos da tela
+      var scene = new Scene(context);
+      var player = new Player();
+      var scoreSticks = new Array();
+      var deathSticks = new Array();
+
+      var nDeathSticks = 1;
+      //ate 150 sem lag
+      var nSticks = 15;
+      var intervalDeath = 2000;
+
+      scene.backgroundImg.onload = function ()
+      {
+        scene.setImg(context);
+      }
+
+      //score sticks
+      for (var i = 0; i < nSticks; i++)
+      {
+        var stick = new Stick();
+        stick.randomPos();
+
+        scoreSticks[i] = stick;
+      }
+
+      //death sticks
+      for (var i = 0; i < nDeathSticks; i++)
+      {
+        var deathStick = new Stick();
+        deathStick.setImg("images/death stick.png");
+        deathStick.randomPos();
+        deathStick.intervalChangePosition(deathStick, intervalDeath);
+
+        deathSticks[i] = deathStick;
+      }
+      //  - - FIM - - Inicializa objetos da tela
+
+
+      //  Eventos Tela
+      var keys = {};
+      document.onkeydown = function(e)
+      {
+        keys[e.which] = true;
+      }
+
+      document.onkeyup = function (e)
+      {
+        delete keys[e.which];
+      }
+      //  - - FIM - - Eventos Tela
+
+      //fps
+      var filterStrength = 20;
+      var frameTime = 0, lastLoop = new Date, thisLoop;
+
+      function animate()
+      {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // move player, e checa colições
+        player.move(keys);
+        for (i = 0; i < nSticks; i++)
+        {
+          scene.colisionScore(player,scoreSticks[i]);
+        }
+
+        for (i = 0; i < nDeathSticks; i++)
+        {
+          if(scene.colisionDeath(player,deathSticks[i]))
+          {
+            //fim de jogo
+            document.onkeydown = "";
+            document.onkeyup = "";
+            keys = "";
+            delete keys;
+          }
+        }
+        // - - FIM - - move player, e checa colições
+
+        scene.drawScene(context, canvas);
+
+        //draw sticks
+        for (i = 0; i < nSticks; i++)
+        {
+          scoreSticks[i].drawElement(context);
+        }
+
+        //draw death sticks
+        for (i = 0; i < nDeathSticks; i++)
+        {
+          deathSticks[i].drawElement(context);
+        }
+
+        player.drawElement(context);
+        player.drawScore(context, canvas);
+
+        var thisFrameTime = (thisLoop=new Date) - lastLoop;
+        frameTime+= (thisFrameTime - frameTime) / filterStrength;
+        lastLoop = thisLoop;
+
+        requestAnimFrame(function()
+        {
+          animate();
+        });
+
+      }
+
+      //animate();
+
+      setInterval(function(){
+        var fdpsLog = (1000/frameTime).toFixed(1) + " fps";
+        console.log(fdpsLog);
+      },500);
+
+    </script>
+  </body>
 </html>
